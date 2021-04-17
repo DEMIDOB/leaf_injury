@@ -10,12 +10,12 @@ from scanner import classify, make_mask_image
 
 clear_cmd = {
     "darwin": "clear",
-    "windows": "cls"
+    "win32": "cls"
 }
 
 opendir_cmd = {
     "darwin": "open",
-    "windows": "explorer"
+    "win32": "explorer"
 }
 
 scan_area = 210 * 297  # mm2
@@ -50,7 +50,6 @@ def manage_file(filename):
                                                                f" Допустимые: jpg, jpeg, png")
     else:
         image, classification_result = classify(f"scans/{filename}")
-        cv.imwrite("test.jpg", image)
         masked = make_mask_image(image, classification_result)
         cv.imwrite("current_mask.jpg", masked)
 
@@ -77,7 +76,12 @@ def manage_file(filename):
         show_scan_info(filename=os.path.abspath(f"scans/{filename}"),
                        masked_filename=os.path.abspath("current_mask.jpg"),
                        injured_area=injured_area, percentage=percentage, w=w, h=h)
-    os.rename(f"scans/{filename}", f"scans/archived/{filename}")
+
+    new_path = f"scans\\archived\\{filename}"
+    if os.path.exists(new_path):
+        os.system(f"del /f {new_path}")
+
+    os.rename(f"scans\\{filename}", new_path)
 
 
 if __name__ == '__main__':
@@ -93,8 +97,12 @@ if __name__ == '__main__':
     if not os.path.exists("scans/"):
         os.system("mkdir scans")
 
-    if not os.path.exists("scans/archived/"):
-        os.system("mkdir scans/archived")
+    if platform == "win32":
+        if not os.path.exists("scans\\archived\\"):
+            os.system("mkdir scans\\archived")
+    else:
+        if not os.path.exists("scans/archived/"):
+            os.system("mkdir scans/archived")
 
     os.system(clear_cmd[platform])
     os.system(f"{opendir_cmd[platform]} scans")
