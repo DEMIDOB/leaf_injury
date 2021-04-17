@@ -1,0 +1,6 @@
+numpy
+scikit-learn
+processing-py
+opencv-python
+pyinstaller
+colorama

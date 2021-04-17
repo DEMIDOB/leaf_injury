@@ -1,0 +1,5 @@
+scans/
+venv/
+current_mask.jpg
+main.spec
+.idea/
